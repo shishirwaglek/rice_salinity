@@ -1,0 +1,49 @@
+body {
+	background: linear-gradient(to top, rgb(3, 19, 26), #171717);
+	color: white;
+	height: 100vh;
+}
+
+.custom-border {
+	border: 2px solid #ffa600;
+	height: max-content;
+	border-radius: 25px;
+}
+
+h5 {
+	line-height: 2;
+	text-align: justify;
+	letter-spacing: 2px;
+}
+
+.incp,
+.vgg,
+.eff,
+.resnet {
+	background-color: #ffa600;
+	border: 2px solid black;
+	padding: 2px;
+	color: black;
+}
+
+.cat {
+	background-color: #ffffff;
+	border: 2px solid black;
+	padding: 2px;
+	color: black;
+}
+
+.clss {
+	background-color: #00eeff;
+	border: 2px solid black;
+	padding: 2px;
+	color: black;
+	text-decoration: underline;
+}
+
+.el {
+	background-color: aquamarine;
+	border: 2px solid black;
+	padding: 2px;
+	color: black;
+}
