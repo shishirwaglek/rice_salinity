@@ -1,7 +1,7 @@
 const teamMentor = [
 	{
 		name: 'Ms. Chinmai Shetty',
-		role: 'Profesoor',
+		role: 'Professor',
 		institute: 'NMAM Institute of Technology',
 		imgSrc: '/static/images/team/chinmayi_maam.jpg',
 		whatsappLink: '#',
