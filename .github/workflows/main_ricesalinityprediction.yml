@@ -2,7 +2,7 @@
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 # More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
 
-name: Build and deploy Python app to Azure Web App - ricesalinityprediction
+name: Build and deploy Python app to Azure Web App - RiceSalinityPrediction
 
 on:
   push:
@@ -64,6 +64,6 @@ jobs:
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: 'ricesalinityprediction'
+          app-name: 'RiceSalinityPrediction'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B1E9872BEB1A444E92EF2E483602A59F }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_82021E93A06B4ED0A2E41ACB1E6EB4A4 }}
