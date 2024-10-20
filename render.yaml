@@ -1,0 +1,34 @@
+# render.yaml
+
+services:
+  - type: web
+    name: my-python-web-app  # Name of your web service
+    env: python  # Environment: Python
+    plan: free  # Plan: Free, you can also choose paid plans like 'starter' or 'standard'
+    buildCommand: "pip install -r requirements.txt"  # Command to install dependencies
+    startCommand: "gunicorn app:app"  # Command to start the application using Gunicorn
+
+    # Specify the path to the Python version. Render supports various Python versions.
+    pythonVersion: "3.9"  # You can adjust this based on your project's requirements
+
+    # Optionally, define environment variables
+    envVars:
+      - key: FLASK_ENV
+        value: "production"
+      - key: AZURE_CONNECTION_STRING
+        sync: true  # Syncs with environment variables you add via the Render dashboard
+      - key: API_KEY
+        sync: true
+
+    # Define the root directory of your project
+    rootDir: ./  # Adjust this if your web app is not in the root of the repo
+
+    # Health Check URL to verify if the app is running correctly (optional)
+    healthCheckPath: "/"
+
+    # Auto-deploy from GitHub or GitLab when new commits are pushed to the master/main branch
+    autoDeploy: true
+
+    # Optional: Set up automatic deployment from specific branches or pull requests
+    pullRequestPreviewsEnabled: true
+    branch: main
