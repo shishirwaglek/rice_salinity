@@ -66,4 +66,4 @@ jobs:
         with:
           app-name: 'RiceSalinityPrediction'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D6CDA2BF60CA4033A4EA0DCA459EFC27 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_06E6E9A0C0C1482ABE5AD8BA8EE2532A }}
