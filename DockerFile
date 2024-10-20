@@ -1,0 +1,22 @@
+# Dockerfile
+
+# Step 1: Base image
+FROM python:3.10-slim
+
+# Step 2: Set the working directory
+WORKDIR /app
+
+# Step 3: Copy requirements.txt to the working directory
+COPY requirements.txt .
+
+# Step 4: Install the dependencies from requirements.txt
+RUN pip install -r requirements.txt
+
+# Step 5: Copy the rest of the application code
+COPY . /app/
+
+# Step 6: Expose the port (adjust this as per your Flask app)
+EXPOSE 5000
+
+# Step 7: Set the entry point to start the app
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
