@@ -2,14 +2,14 @@
 
 services:
   - type: web
-    name: my-python-web-app  # Name of your web service
+    name: RiceSalinityPrediction  # Name of your web service
     env: python  # Environment: Python
     plan: free  # Plan: Free, you can also choose paid plans like 'starter' or 'standard'
     buildCommand: "pip install -r requirements.txt"  # Command to install dependencies
     startCommand: "gunicorn app:app"  # Command to start the application using Gunicorn
 
     # Specify the path to the Python version. Render supports various Python versions.
-    pythonVersion: "3.9"  # You can adjust this based on your project's requirements
+    pythonVersion: "3.10"  # You can adjust this based on your project's requirements
 
     # Optionally, define environment variables
     envVars:
