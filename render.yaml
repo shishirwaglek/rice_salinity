@@ -8,8 +8,7 @@ services:
     buildCommand: "pip install -r requirements.txt"  # Command to install dependencies
     startCommand: "gunicorn app:app"  # Command to start the application using Gunicorn
 
-    # Specify the path to the Python version. Render supports various Python versions.
-    pythonVersion: "3.10.5"  # You can adjust this based on your project's requirements
+  
 
     # Optionally, define environment variables
     envVars:
