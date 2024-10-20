@@ -1,5 +1,4 @@
-
-from flask import Flask, request, jsonify, redirect, url_for, render_template 
+from flask import Flask, request, jsonify, redirect, url_for, render_template
 from flask_cors import CORS
 import tensorflow as tf
 import numpy as np
@@ -7,62 +6,110 @@ import base64
 from PIL import Image
 import io
 import matplotlib
-matplotlib.use('Agg')  # Use the 'Agg' backend for non-GUI environments
-import matplotlib.pyplot as plt
 import joblib
 import os
 from dotenv import load_dotenv
+import tempfile
+from azure.storage.blob import BlobServiceClient
+from io import BytesIO
+
+matplotlib.use('Agg')  # Use the 'Agg' backend for non-GUI environments
+import matplotlib.pyplot as plt
 
 # Load environment variables from .env file
 load_dotenv()
-# Access the API key from the environment variable
-API_KEY = os.getenv('API_KEY')  # Make sure 'API_KEY' is the variable name in your .env file
+API_KEY = os.getenv('API_KEY')
+AZURE_CONNECTION_STRING = os.getenv('AZURE_CONNECTION_STRING')
 
 # Initialize Flask app
-app = Flask(__name__, 
-             template_folder='../frontend/templates', 
-             static_folder='../frontend/static')  # Set template and static folders
+app = Flask(__name__,
+             template_folder='./frontend/templates',
+             static_folder='./frontend/static')  
 CORS(app)  # Enable CORS to allow cross-origin requests
 
 @app.route('/get-api-key')
 def get_api_key():
-    return jsonify({"api_key": os.getenv("API_KEY")})
-
+    return jsonify({"api_key": API_KEY})
 
 @app.route('/')
 def index1():
-    return render_template('index.html')  # Render the index.html template
+    return render_template('index.html')
 
 @app.route('/about-prj')
 def index2():
-    return render_template('about-prj.html')  # Render the index.html template
+    return render_template('about-prj.html')
 
 @app.route('/about-us')
 def index3():
-    return render_template('about-us.html')  # Render the index.html template
+    return render_template('about-us.html')
 
 @app.route('/result')
 def index4():
-    return render_template('result.html')  # Render the index.html template
+    return render_template('result.html')
 
 @app.route('/fail')
 def index5():
-    return render_template('fail.html')  # Render the index.html template
+    return render_template('fail.html')
 
+# Azure Blob Storage settings
+CONTAINER_NAME = "mlmodels"
 
-# Load your pre-trained models
-model_1 = tf.keras.models.load_model('./models/VGG16_model.h5')          # VGG16
-model_2 = tf.keras.models.load_model('./models/inceptionv3SDG.h5')      # InceptionV3
-model_3 = tf.keras.models.load_model('./models/ResNet50_model.h5')      # ResNet50
-model_4 = tf.keras.models.load_model('./models/EfficientNetB3_model.h5')# EfficientNetB3
-# Load the plant detection model
-plant_detection_model = tf.keras.models.load_model('./models/plant_non_plant_model.h5')
-# Load the meta-learner
-meta_learner = joblib.load('./models/meta_learner.pkl')
+# Initialize BlobServiceClient
+blob_service_client = BlobServiceClient.from_connection_string(AZURE_CONNECTION_STRING)
 
-# Class labels for tolerance models
+# Model filenames mapping
+models_info = {
+    "model_1": "VGG16_model.h5",
+    "model_2": "inceptionv3SDG.h5",
+    "model_3": "ResNet50_model.h5",
+    "model_4": "EfficientNetB3_model.h5",
+    "plant_detection_model": "plant_non_plant_model.h5",
+ 
+}
+
+# Local storage path
+LOCAL_MODEL_DIR = "/home/site/wwwroot/models/"
+
+# Ensure the directory exists
+os.makedirs(LOCAL_MODEL_DIR, exist_ok=True)
+
+def download_model_if_not_exists(model_name, local_path):
+    if not os.path.exists(local_path):
+        print(f"Downloading {model_name} from Azure Blob Storage...")
+        blob_client = blob_service_client.get_blob_client(container=CONTAINER_NAME, blob=model_name)
+        model_stream = BytesIO()
+        blob_client.download_blob().readinto(model_stream)
+        model_stream.seek(0)
+        with open(local_path, 'wb') as local_file:
+            local_file.write(model_stream.getvalue())
+        print(f"{model_name} downloaded and saved to {local_path}.")
+    else:
+        print(f"{model_name} already exists at {local_path}.")
+
+def load_model(local_path):
+    return tf.keras.models.load_model(local_path, compile=False)
+
+def load_joblib_model(local_path):
+    with open(local_path, 'rb') as file:
+        return joblib.load(file)
+
+# Download and load models
+for model_key, model_name in models_info.items():
+    local_model_path = os.path.join(LOCAL_MODEL_DIR, model_name)
+    download_model_if_not_exists(model_name, local_model_path)
+
+# Load TensorFlow models
+model_1 = load_model(os.path.join(LOCAL_MODEL_DIR, models_info["model_1"]))
+model_2 = load_model(os.path.join(LOCAL_MODEL_DIR, models_info["model_2"]))
+model_3 = load_model(os.path.join(LOCAL_MODEL_DIR, models_info["model_3"]))
+model_4 = load_model(os.path.join(LOCAL_MODEL_DIR, models_info["model_4"]))
+
+# Load joblib models
+plant_detection_model = load_model(os.path.join(LOCAL_MODEL_DIR, models_info["plant_detection_model"]))
+meta_learner = joblib.load('./backend/models/meta_learner.pkl')
+
+# Class labels
 class_labels = ['Highly_Tolerant', 'Tolerant', 'Moderately_Tolerant', 'Sensitive', 'Highly_Sensitive']
-
 # Preprocess the image for each model
 def preprocess_image(image, target_size):
     if image.mode != 'RGB':
