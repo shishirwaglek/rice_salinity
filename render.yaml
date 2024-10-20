@@ -3,31 +3,26 @@
 services:
   - type: web
     name: RiceSalinityPrediction  # Name of your web service
-    env: python  # Environment: Python
-    plan: free  # Plan: Free, you can also choose paid plans like 'starter' or 'standard'
-    buildCommand: "pip install -r requirements.txt"  # Command to install dependencies
-    startCommand: "gunicorn app:app"  # Command to start the application using Gunicorn
+    env: python  # The environment for a Python app
+    plan: free  # Specify the pricing plan: 'free' for free tier, or 'starter'/'standard' for paid tiers
+    buildCommand: "pip install -r requirements.txt"  # Install dependencies using the requirements.txt file
+    startCommand: "gunicorn app:app"  # Use Gunicorn to start the app, adjust as needed for your app's entry point
 
-  
-
-    # Optionally, define environment variables
+    # Optional environment variables
     envVars:
       - key: FLASK_ENV
         value: "production"
       - key: AZURE_CONNECTION_STRING
-        sync: true  # Syncs with environment variables you add via the Render dashboard
+        sync: true  # Syncs the variable with Render's dashboard for added security
       - key: API_KEY
         sync: true
 
-    # Define the root directory of your project
-    rootDir: ./  # Adjust this if your web app is not in the root of the repo
+    # Specify the root directory of your project (if different from the repo root)
+    rootDir: ./  # Adjust if your app is in a subfolder
 
-    # Health Check URL to verify if the app is running correctly (optional)
-    healthCheckPath: "/"
-
-    # Auto-deploy from GitHub or GitLab when new commits are pushed to the master/main branch
+    # Enable automatic deploys on pushes to the master/main branch
     autoDeploy: true
 
-    # Optional: Set up automatic deployment from specific branches or pull requests
+    # Optional: Set up automatic deployment previews for pull requests
     pullRequestPreviewsEnabled: true
     branch: main
