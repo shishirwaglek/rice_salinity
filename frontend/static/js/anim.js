@@ -10,7 +10,7 @@ fetch('/get-api-key') // Adjusted to match the route in Flask
 	.then((response) => response.json())
 	.then((data) => {
 		API_KEY = data.api_key;
-		console.log('API Key:', API_KEY); // Use the API key as needed
+		
 	})
 	.catch((error) => {
 		console.error('Error fetching API key:', error);
@@ -44,8 +44,8 @@ function compressImage(file, callback) {
 			const ctx = canvas.getContext('2d');
 
 			// Set new dimensions (scale image while maintaining aspect ratio)
-			const maxWidth = 1024;
-			const maxHeight = 1024;
+			const maxWidth = 512;
+			const maxHeight = 512;
 			let width = img.width;
 			let height = img.height;
 
